@@ -15,14 +15,9 @@ namespace DemoHarness
             var player = new Player();
 
             Console.WriteLine("Welcome to the demo of NetCoreAudio package");
-            Console.WriteLine("Please enter the full path to the file you would like to play:");
+            ShowFileEntryPrompt();
             var fileName = Console.ReadLine();
-            Console.WriteLine("You can manipulate the player with the following commands:");
-            Console.WriteLine("play - Play the specified file from the start");
-            Console.WriteLine("pause - Pause the playback");
-            Console.WriteLine("resume - Resume the playback");
-            Console.WriteLine("stop - Stop the playback");
-            Console.WriteLine("exit - Exit the app");
+            ShowInstruction();
 
             while (true)
             {
@@ -33,6 +28,7 @@ namespace DemoHarness
                     switch (command)
                     {
                         case "play":
+                            Console.WriteLine($"Playing {fileName}");
                             player.Play(fileName).Wait();
                             Console.WriteLine("Playback started");
                             break;
@@ -48,6 +44,12 @@ namespace DemoHarness
                             player.Stop().Wait();
                             Console.WriteLine("Playback stopped");
                             break;
+                        case "change":
+                            player.Stop().Wait();
+                            ShowFileEntryPrompt();
+                            fileName = Console.ReadLine();
+                            ShowInstruction();
+                            break;
                         case "exit":
                             break;
                         default:
@@ -62,6 +64,22 @@ namespace DemoHarness
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        private static void ShowFileEntryPrompt()
+        {
+            Console.WriteLine("Please enter the full path to the file you would like to play:");
+        }
+
+        private static void ShowInstruction()
+        {
+            Console.WriteLine("You can manipulate the player with the following commands:");
+            Console.WriteLine("play - Play the specified file from the start");
+            Console.WriteLine("pause - Pause the playback");
+            Console.WriteLine("resume - Resume the playback");
+            Console.WriteLine("stop - Stop the playback");
+            Console.WriteLine("change - Change the file name");
+            Console.WriteLine("exit - Exit the app");
         }
     }
 }
