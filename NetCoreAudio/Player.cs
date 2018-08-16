@@ -1,5 +1,7 @@
 ﻿using NetCoreAudio.Interfaces;
 using NetCoreAudio.Players;
+using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace NetCoreAudio
@@ -10,7 +12,10 @@ namespace NetCoreAudio
 
         public Player()
         {
-            internalPlayer = new WindowsPlayer();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                internalPlayer = new WindowsPlayer();
+            else
+                throw new Exception("Currently, no implementation exist for other platforms"); // Only while they haven't been added
         }
 
         public async Task Play(string fileName)
