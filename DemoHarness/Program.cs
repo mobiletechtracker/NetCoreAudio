@@ -5,12 +5,12 @@ using System.Text;
 
 namespace DemoHarness
 {
-    class Program
+    public class Program
     {
         [DllImport("winmm.dll")]
         private static extern long mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var player = new Player();
 

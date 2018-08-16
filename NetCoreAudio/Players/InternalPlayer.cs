@@ -11,13 +11,10 @@ namespace NetCoreAudio.Players
         [DllImport("winmm.dll")]
         private static extern long mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
 
-        private bool isPlaying = false;
-
         public Task Play(string fileName)
         {
             ExecuteMsiCommand("Close All");
             ExecuteMsiCommand($"Open {fileName} Type MPEGVideo Alias myDevice");
-            isPlaying = true;
             ExecuteMsiCommand("Play myDevice");
 
             return Task.CompletedTask;
