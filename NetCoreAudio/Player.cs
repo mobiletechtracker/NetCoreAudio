@@ -8,34 +8,36 @@ namespace NetCoreAudio
 {
     public class Player : IPlayer
     {
-        private readonly IPlayer internalPlayer;
+        private readonly IPlayer _internalPlayer;
 
         public Player()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                internalPlayer = new WindowsPlayer();
+                _internalPlayer = new WindowsPlayer();
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                _internalPlayer = new LinuxPlayer();
             else
                 throw new Exception("Currently, no implementation exist for other platforms"); // Only while they haven't been added
         }
 
         public async Task Play(string fileName)
         {
-            await internalPlayer.Play(fileName);
+            await _internalPlayer.Play(fileName);
         }
 
         public async Task Pause()
         {
-            await internalPlayer.Pause();
+            await _internalPlayer.Pause();
         }
 
         public async Task Resume()
         {
-            await internalPlayer.Resume();
+            await _internalPlayer.Resume();
         }
 
         public async Task Stop()
         {
-            await internalPlayer.Stop();
+            await _internalPlayer.Stop();
         }
     }
 }
