@@ -42,9 +42,10 @@ namespace NetCoreAudio.Players
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "aplay",
-                    Arguments = $"{escapedArgs} -i",
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"aplay {escapedArgs} -i\"",
                     RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }
