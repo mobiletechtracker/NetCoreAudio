@@ -16,8 +16,10 @@ namespace NetCoreAudio
                 _internalPlayer = new WindowsPlayer();
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 _internalPlayer = new LinuxPlayer();
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                _internalPlayer = new MacPlayer();
             else
-                throw new Exception("Currently, no implementation exist for other platforms"); // Only while they haven't been added
+                throw new Exception("No implementation exist for the current OS");
         }
 
         public async Task Play(string fileName)
