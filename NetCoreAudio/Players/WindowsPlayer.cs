@@ -19,7 +19,7 @@ namespace NetCoreAudio.Players
 		public WindowsPlayer()
 		{
 			_playbackTimer = new Timer();
-			_playbackTimer.Elapsed += HandleElapsedTime;
+			_playbackTimer.Elapsed += HandlePlaybackFinished;
 			_playStopwatch = new Stopwatch();
 		}
 
@@ -79,7 +79,7 @@ namespace NetCoreAudio.Players
 			return Task.CompletedTask;
         }
 
-		private void HandleElapsedTime(object sender, ElapsedEventArgs e)
+		private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
 		{
 			Playing = false;
 		}

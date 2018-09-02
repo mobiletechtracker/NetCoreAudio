@@ -1,4 +1,5 @@
 ﻿using NetCoreAudio.Interfaces;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -8,24 +9,33 @@ namespace NetCoreAudio.Players
     {
         private Process _process = null;
 
-		public bool Playing => throw new System.NotImplementedException();
+		public bool Playing { get; private set; }
 
-		public bool Paused => throw new System.NotImplementedException();
+		public bool Paused { get; private set; }
 
 		public async Task Play(string fileName)
         {
             await Stop();
             _process = StartAplayPlayback(fileName);
+			Playing = true;
         }
 
         public async Task Pause()
         {
-            await PauseOrResume();
+			if (Playing && !Paused)
+			{
+				await PauseOrResume();
+				Paused = true;
+			}
         }
 
         public async Task Resume()
         {
-            await PauseOrResume();
+			if (Playing && Paused)
+			{
+				await PauseOrResume();
+				Paused = false;
+			}
         }
 
         public Task Stop()
@@ -35,6 +45,10 @@ namespace NetCoreAudio.Players
                 _process.Dispose();
                 _process = null;
             }
+
+			Playing = false;
+			Paused = false;
+
             return Task.CompletedTask;
         }
 
@@ -54,6 +68,7 @@ namespace NetCoreAudio.Players
                     CreateNoWindow = true,
                 }
             };
+			process.Exited += HandlePlaybackFinished;
             process.Start();
             return process;
         }
@@ -68,5 +83,10 @@ namespace NetCoreAudio.Players
 
             return Task.CompletedTask;
         }
-    }
+
+		private void HandlePlaybackFinished(object sender, EventArgs e)
+		{
+			Playing = false;
+		}
+	}
 }

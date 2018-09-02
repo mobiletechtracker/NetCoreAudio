@@ -1,4 +1,5 @@
 ﻿using NetCoreAudio.Interfaces;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -10,50 +11,54 @@ namespace NetCoreAudio.Players
 
         private const string KillProcessCommand = "ps - A | grep - m1 $1 | awk '{print $1}' | kill {0}";
 
-		public bool Playing => throw new System.NotImplementedException();
+		public bool Playing { get; private set; }
 
-		public bool Paused => throw new System.NotImplementedException();
+		public bool Paused { get; private set; }
 
 		public async Task Play(string fileName)
         {
             await Stop();
             _process = StartBashProcess($"afplay {fileName}");
-        }
+			_process.Exited += HandlePlaybackFinished;
+			Playing = true;
+		}
 
         public Task Pause()
         {
-            try
-            {
-                var tempProcess = StartBashProcess(string.Format(KillProcessCommand, "-17"));
-                tempProcess.WaitForExit();
-            }
-            catch
-            { }
+			if (Playing && !Paused)
+			{
+				var tempProcess = StartBashProcess(string.Format(KillProcessCommand, "-17"));
+				tempProcess.WaitForExit();
+				Paused = true;
+			}
 
             return Task.CompletedTask;
         }
 
         public Task Resume()
         {
-            try
-            {
-                var tempProcess = StartBashProcess(string.Format(KillProcessCommand, "-19"));
-                tempProcess.WaitForExit();
-            }
-            catch
-            { }
+			if (Playing && Paused)
+			{
+				var tempProcess = StartBashProcess(string.Format(KillProcessCommand, "-19"));
+				tempProcess.WaitForExit();
+				Paused = false;
+			}
 
             return Task.CompletedTask;
         }
 
         public Task Stop()
         {
-            if (_process != null)
-            {
-                _process.Dispose();
-                _process = null;
-            }
-            return Task.CompletedTask;
+			if (_process != null)
+			{
+				_process.Dispose();
+				_process = null;
+			}
+
+			Playing = false;
+			Paused = false;
+
+			return Task.CompletedTask;
         }
 
         private Process StartBashProcess(string command)
@@ -75,5 +80,10 @@ namespace NetCoreAudio.Players
             process.Start();
             return process;
         }
-    }
+
+		private void HandlePlaybackFinished(object sender, EventArgs e)
+		{
+			Playing = false;
+		}
+	}
 }
