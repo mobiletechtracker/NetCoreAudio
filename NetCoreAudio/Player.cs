@@ -10,7 +10,11 @@ namespace NetCoreAudio
     {
         private readonly IPlayer _internalPlayer;
 
-        public Player()
+		public bool Playing => _internalPlayer.Playing;
+
+		public bool Paused => _internalPlayer.Paused;
+
+		public Player()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 _internalPlayer = new WindowsPlayer();

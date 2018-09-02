@@ -8,7 +8,11 @@ namespace NetCoreAudio.Players
     {
         private Process _process = null;
 
-        public async Task Play(string fileName)
+		public bool Playing => throw new System.NotImplementedException();
+
+		public bool Paused => throw new System.NotImplementedException();
+
+		public async Task Play(string fileName)
         {
             await Stop();
             _process = StartAplayPlayback(fileName);

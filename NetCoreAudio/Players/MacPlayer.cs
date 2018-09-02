@@ -10,7 +10,11 @@ namespace NetCoreAudio.Players
 
         private const string KillProcessCommand = "ps - A | grep - m1 $1 | awk '{print $1}' | kill {0}";
 
-        public async Task Play(string fileName)
+		public bool Playing => throw new System.NotImplementedException();
+
+		public bool Paused => throw new System.NotImplementedException();
+
+		public async Task Play(string fileName)
         {
             await Stop();
             _process = StartBashProcess($"afplay {fileName}");

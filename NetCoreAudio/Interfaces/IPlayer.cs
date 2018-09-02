@@ -4,7 +4,10 @@ namespace NetCoreAudio.Interfaces
 {
     public interface IPlayer
     {
-        Task Play(string fileName);
+		bool Playing { get; }
+		bool Paused { get; }
+
+		Task Play(string fileName);
         Task Pause();
         Task Resume();
         Task Stop();

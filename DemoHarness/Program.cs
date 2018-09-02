@@ -30,19 +30,19 @@ namespace DemoHarness
                         case "play":
                             Console.WriteLine($"Playing {fileName}");
                             player.Play(fileName).Wait();
-                            Console.WriteLine("Playback started");
+                            Console.WriteLine(player.Playing ? "Playback started" : "Could not start the playback");
                             break;
                         case "pause":
                             player.Pause().Wait();
-                            Console.WriteLine("Playback paused");
+                            Console.WriteLine(player.Paused ? "Playback paused" : "Could not pause playback");
                             break;
                         case "resume":
                             player.Resume().Wait();
-                            Console.WriteLine("Playback resumed");
+                            Console.WriteLine(player.Playing && !player.Paused ? "Playback resumed" : "Could not resume playback");
                             break;
                         case "stop":
                             player.Stop().Wait();
-                            Console.WriteLine("Playback stopped");
+                            Console.WriteLine(!player.Playing ? "Playback stopped" : "Could not stop the playback");
                             break;
                         case "change":
                             player.Stop().Wait();
