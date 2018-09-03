@@ -9,7 +9,7 @@ namespace NetCoreAudio.Players
     {
         private Process _process = null;
 
-        private const string KillProcessCommand = "ps - A | grep - m1 $1 | awk '{print $1}' | kill {0}";
+        private const string KillProcessCommand = "ps -A | grep -m1 $1 | awk '{print $1}' | kill {0}";
 
 		public bool Playing { get; private set; }
 
