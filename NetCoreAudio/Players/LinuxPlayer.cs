@@ -9,7 +9,9 @@ namespace NetCoreAudio.Players
     {
         private Process _process = null;
 
-		public bool Playing { get; private set; }
+        public event EventHandler PlaybackFinished;
+
+        public bool Playing { get; private set; }
 
 		public bool Paused { get; private set; }
 
@@ -87,6 +89,7 @@ namespace NetCoreAudio.Players
 		private void HandlePlaybackFinished(object sender, EventArgs e)
 		{
 			Playing = false;
-		}
+            PlaybackFinished?.Invoke(this, e);
+        }
 	}
 }

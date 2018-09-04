@@ -13,29 +13,28 @@ namespace NetCoreAudio.Players
         [DllImport("winmm.dll")]
         private static extern long mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
 
-		private readonly Timer _playbackTimer;
-		private readonly Stopwatch _playStopwatch;
+		private Timer _playbackTimer;
+		private Stopwatch _playStopwatch;
 
-		public WindowsPlayer()
-		{
-			_playbackTimer = new Timer();
-			_playbackTimer.Elapsed += HandlePlaybackFinished;
-			_playStopwatch = new Stopwatch();
-		}
+        public event EventHandler PlaybackFinished;
 
-		public bool Playing { get; private set; }
+        public bool Playing { get; private set; }
 		public bool Paused { get; private set; }
 
 		public Task Play(string fileName)
         {
+            _playbackTimer = new Timer();
+            _playbackTimer.AutoReset = false;
+            _playStopwatch = new Stopwatch();
             ExecuteMsiCommand("Close All");
             ExecuteMsiCommand($"Open {fileName} Type MPEGVideo Alias myDevice");
 			ExecuteMsiCommand("Status myDevice Length");
 			ExecuteMsiCommand("Play myDevice");
 			Paused = false;
 			Playing = true;
-			_playbackTimer.Start();
-			_playStopwatch.Start();
+            _playbackTimer.Elapsed += HandlePlaybackFinished;
+            _playbackTimer.Start();
+            _playStopwatch.Start();
 
 			return Task.CompletedTask;
         }
@@ -61,7 +60,8 @@ namespace NetCoreAudio.Players
 				ExecuteMsiCommand("Resume myDevice");
 				Paused = false;
 				_playbackTimer.Start();
-				_playStopwatch.Start();
+                _playStopwatch.Reset();
+                _playStopwatch.Start();
 			}
             return Task.CompletedTask;
         }
@@ -82,7 +82,10 @@ namespace NetCoreAudio.Players
 		private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
 		{
 			Playing = false;
-		}
+            PlaybackFinished?.Invoke(this, e);
+            _playbackTimer.Dispose();
+            _playbackTimer = null;
+        }
 
 		private Task ExecuteMsiCommand(string commandString)
         {

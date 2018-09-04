@@ -10,7 +10,9 @@ namespace NetCoreAudio
     {
         private readonly IPlayer _internalPlayer;
 
-		public bool Playing => _internalPlayer.Playing;
+        public event EventHandler PlaybackFinished;
+
+        public bool Playing => _internalPlayer.Playing;
 
 		public bool Paused => _internalPlayer.Paused;
 
@@ -24,6 +26,8 @@ namespace NetCoreAudio
                 _internalPlayer = new MacPlayer();
             else
                 throw new Exception("No implementation exist for the current OS");
+
+            _internalPlayer.PlaybackFinished += OnPlaybackFinished;
         }
 
         public async Task Play(string fileName)
@@ -44,6 +48,11 @@ namespace NetCoreAudio
         public async Task Stop()
         {
             await _internalPlayer.Stop();
+        }
+
+        private void OnPlaybackFinished(object sender, EventArgs e)
+        {
+            PlaybackFinished?.Invoke(this, e);
         }
     }
 }

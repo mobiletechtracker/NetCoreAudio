@@ -13,6 +13,7 @@ namespace DemoHarness
         private static void Main(string[] args)
         {
             var player = new Player();
+            player.PlaybackFinished += OnPlaybackFinished;
 
             Console.WriteLine("Welcome to the demo of NetCoreAudio package");
             ShowFileEntryPrompt();
@@ -80,6 +81,11 @@ namespace DemoHarness
             Console.WriteLine("stop - Stop the playback");
             Console.WriteLine("change - Change the file name");
             Console.WriteLine("exit - Exit the app");
+        }
+
+        private static void OnPlaybackFinished(object sender, EventArgs e)
+        {
+            Console.WriteLine("Playback finished");
         }
     }
 }

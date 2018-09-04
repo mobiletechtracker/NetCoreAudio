@@ -11,7 +11,9 @@ namespace NetCoreAudio.Players
 
         private const string KillProcessCommand = "ps -A | grep -m1 'afplay' | awk '{print $1}' | kill {0}";
 
-		public bool Playing { get; private set; }
+        public event EventHandler PlaybackFinished;
+
+        public bool Playing { get; private set; }
 
 		public bool Paused { get; private set; }
 
@@ -84,6 +86,7 @@ namespace NetCoreAudio.Players
 		private void HandlePlaybackFinished(object sender, EventArgs e)
 		{
 			Playing = false;
-		}
+            PlaybackFinished?.Invoke(this, e);
+        }
 	}
 }
