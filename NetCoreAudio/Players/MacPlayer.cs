@@ -20,7 +20,7 @@ namespace NetCoreAudio.Players
 		public async Task Play(string fileName)
         {
             await Stop();
-            _process = StartBashProcess($"afplay {fileName}");
+            _process = StartBashProcess($"afplay '{fileName}'");
 			_process.Exited += HandlePlaybackFinished;
 			Playing = true;
 		}

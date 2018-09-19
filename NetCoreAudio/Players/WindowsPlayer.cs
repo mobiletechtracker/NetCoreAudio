@@ -27,7 +27,7 @@ namespace NetCoreAudio.Players
             _playbackTimer.AutoReset = false;
             _playStopwatch = new Stopwatch();
             ExecuteMsiCommand("Close All");
-            ExecuteMsiCommand($"Open {fileName} Type MPEGVideo Alias myDevice");
+            ExecuteMsiCommand($"Open \"{fileName}\" Type MPEGVideo Alias myDevice");
 			ExecuteMsiCommand("Status myDevice Length");
 			ExecuteMsiCommand("Play myDevice");
 			Paused = false;
