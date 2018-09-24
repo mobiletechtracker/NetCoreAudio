@@ -95,7 +95,7 @@ namespace NetCoreAudio.Players
 
             if (result != 0)
             {
-                throw new Exception($"Error executing MSI command. Error code: {result}");
+                throw new Exception($"Error executing MCI command. Error code: {result}");
             }
 
 			if (commandString.ToLower().StartsWith("status") && int.TryParse(sb.ToString(), out var length))
