@@ -44,6 +44,7 @@ namespace NetCoreAudio.Players
         {
             if (_process != null)
             {
+				_process.Kill();
                 _process.Dispose();
                 _process = null;
             }
