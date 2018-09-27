@@ -81,7 +81,7 @@ namespace NetCoreAudio.Players
             if (_process != null)
             {
                 // Space character pauses/resumes aplay running in interactive mode
-                _process.StandardInput.Write(' ');
+                _process.StandardInput.Write('\x20');
             }
 
             return Task.CompletedTask;
