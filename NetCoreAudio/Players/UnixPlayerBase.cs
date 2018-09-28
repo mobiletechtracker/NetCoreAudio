@@ -9,8 +9,8 @@ namespace NetCoreAudio.Players
 	{
 		private Process _process = null;
 
-		internal const string PauseProcessCommand = "killall -STOP {0}";
-		internal const string ResumeProcessCommand = "killall -CONT {0}";
+		internal const string PauseProcessCommand = "kill -STOP {0}";
+		internal const string ResumeProcessCommand = "kill -CONT {0}";
 
 		protected virtual string BashToolName { get; }
 
@@ -32,9 +32,9 @@ namespace NetCoreAudio.Players
 
 		public Task Pause()
 		{
-			if (Playing && !Paused)
+			if (Playing && !Paused && _process != null)
 			{
-				var tempProcess = StartBashProcess(string.Format(PauseProcessCommand, BashToolName));
+				var tempProcess = StartBashProcess(string.Format(PauseProcessCommand, _process.SessionId));
 				tempProcess.WaitForExit();
 				Paused = true;
 			}
@@ -44,9 +44,9 @@ namespace NetCoreAudio.Players
 
 		public Task Resume()
 		{
-			if (Playing && Paused)
+			if (Playing && Paused && _process != null)
 			{
-				var tempProcess = StartBashProcess(string.Format(ResumeProcessCommand, BashToolName));
+				var tempProcess = StartBashProcess(string.Format(ResumeProcessCommand, _process.SessionId));
 				tempProcess.WaitForExit();
 				Paused = false;
 			}
