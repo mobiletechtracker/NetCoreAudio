@@ -7,9 +7,6 @@ namespace DemoHarness
 {
     public class Program
     {
-        [DllImport("winmm.dll")]
-        private static extern long mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
-
         private static void Main(string[] args)
         {
             var player = new Player();
