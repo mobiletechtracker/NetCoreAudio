@@ -34,7 +34,7 @@ namespace NetCoreAudio.Players
 		{
 			if (Playing && !Paused && _process != null)
 			{
-				var tempProcess = StartBashProcess(string.Format(PauseProcessCommand, _process.SessionId));
+				var tempProcess = StartBashProcess(string.Format(PauseProcessCommand, _process.Id));
 				tempProcess.WaitForExit();
 				Paused = true;
 			}
@@ -46,7 +46,7 @@ namespace NetCoreAudio.Players
 		{
 			if (Playing && Paused && _process != null)
 			{
-				var tempProcess = StartBashProcess(string.Format(ResumeProcessCommand, _process.SessionId));
+				var tempProcess = StartBashProcess(string.Format(ResumeProcessCommand, _process.Id));
 				tempProcess.WaitForExit();
 				Paused = false;
 			}
