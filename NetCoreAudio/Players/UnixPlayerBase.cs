@@ -24,6 +24,7 @@ namespace NetCoreAudio.Players
 		{
 			await Stop();
 			_process = StartBashProcess($"{BashToolName} '{fileName}'");
+			_process.EnableRaisingEvents = true;
 			_process.Exited += HandlePlaybackFinished;
 			_process.ErrorDataReceived += HandlePlaybackFinished;
 			_process.Disposed += HandlePlaybackFinished;
