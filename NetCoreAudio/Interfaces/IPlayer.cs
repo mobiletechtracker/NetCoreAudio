@@ -8,9 +8,9 @@ namespace NetCoreAudio.Interfaces
         event EventHandler PlaybackFinished;
 
         bool Playing { get; }
-		bool Paused { get; }
+        bool Paused { get; }
 
-		Task Play(string fileName);
+        Task Play(string fileName);
         Task Pause();
         Task Resume();
         Task Stop();
