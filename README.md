@@ -1,13 +1,14 @@
 # NetCoreAudio
+
 The library allows playback of audio files on .NET Core on any operating system with minimal dependencies
 
-# Usage
+## Usage
 
 The library exposes Player class, which detects the OS the library is running on and abstracts away any OS-specific audio playback implementations.
 
 ## Properties
 
-### bool Plaing
+### bool Playing
 
 Indicates that the audio is currently playing.
 
@@ -23,7 +24,7 @@ Will stop any current playback and will start playing the specified audio file. 
 
 ### Pause()
 
-Pauses any ongong playback. Sets Paused flag to true. Doesn't modify Playing flag.
+Pauses any ongoing playback. Sets Paused flag to true. Doesn't modify Playing flag.
 
 ### Resume()
 
@@ -40,4 +41,3 @@ Stopped playback cannot be resumed. If the same file needs to be played again, i
 ### EventHandler PlaybackFinished
 
 Internally, sets Playing flag to false. Additional handlers can be attached to it to handle any custom logic.
-
