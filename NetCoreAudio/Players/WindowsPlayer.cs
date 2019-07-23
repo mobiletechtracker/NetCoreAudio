@@ -11,10 +11,15 @@ namespace NetCoreAudio.Players
     internal class WindowsPlayer : IPlayer
     {
         [DllImport("winmm.dll")]
-        private static extern long mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
+        private static extern int mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
 
-        private Timer _playbackTimer;
+		[DllImport("winmm.dll")]
+		private static extern int mciGetErrorString(int errorCode, StringBuilder errorText, int errorTextSize);
+
+		private Timer _playbackTimer;
         private Stopwatch _playStopwatch;
+
+		private string _fileName;
 
         public event EventHandler PlaybackFinished;
 
@@ -23,13 +28,13 @@ namespace NetCoreAudio.Players
 
         public Task Play(string fileName)
         {
-            _playbackTimer = new Timer();
+			_fileName = fileName;
+			_playbackTimer = new Timer();
             _playbackTimer.AutoReset = false;
             _playStopwatch = new Stopwatch();
             ExecuteMsiCommand("Close All");
-            ExecuteMsiCommand($"Open \"{fileName}\" Type MPEGVideo Alias myDevice");
-            ExecuteMsiCommand("Status myDevice Length");
-            ExecuteMsiCommand("Play myDevice");
+            ExecuteMsiCommand($"Status {_fileName} Length");
+            ExecuteMsiCommand($"Play {_fileName}");
             Paused = false;
             Playing = true;
             _playbackTimer.Elapsed += HandlePlaybackFinished;
@@ -43,7 +48,7 @@ namespace NetCoreAudio.Players
         {
             if (Playing && !Paused)
             {
-                ExecuteMsiCommand("Pause myDevice");
+                ExecuteMsiCommand($"Pause {_fileName}");
                 Paused = true;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
@@ -57,7 +62,7 @@ namespace NetCoreAudio.Players
         {
             if (Playing && Paused)
             {
-                ExecuteMsiCommand("Resume myDevice");
+                ExecuteMsiCommand($"Resume {_fileName}");
                 Paused = false;
                 _playbackTimer.Start();
                 _playStopwatch.Reset();
@@ -70,8 +75,8 @@ namespace NetCoreAudio.Players
         {
             if (Playing)
             {
-                ExecuteMsiCommand("Close myDevice");
-                Playing = false;
+                ExecuteMsiCommand($"Stop {_fileName}");
+				Playing = false;
                 Paused = false;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
@@ -79,7 +84,14 @@ namespace NetCoreAudio.Players
             return Task.CompletedTask;
         }
 
-        private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
+		private void MarkPlaybackAsStopped()
+		{
+			Playing = false;
+			_playbackTimer.Stop();
+			_playbackTimer.Elapsed -= HandlePlaybackFinished;
+		}
+
+		private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
         {
             Playing = false;
             PlaybackFinished?.Invoke(this, e);
@@ -95,7 +107,13 @@ namespace NetCoreAudio.Players
 
             if (result != 0)
             {
-                throw new Exception($"Error executing MCI command. Error code: {result}");
+				var errorSb = new StringBuilder($"Error executing MCI command '{commandString}'. Error code: {result}.");
+				var sb2 = new StringBuilder(128);
+
+				mciGetErrorString(result, sb2, 128);
+				errorSb.Append($" Message: {sb2.ToString()}");
+
+				throw new Exception(errorSb.ToString());
             }
 
             if (commandString.ToLower().StartsWith("status") && int.TryParse(sb.ToString(), out var length))
@@ -103,5 +121,5 @@ namespace NetCoreAudio.Players
 
             return Task.CompletedTask;
         }
-    }
+	}
 }
