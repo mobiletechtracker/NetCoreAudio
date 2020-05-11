@@ -6,6 +6,10 @@ The library allows playback of audio files on .NET Core on any operating system 
 
 The library exposes Player class, which detects the OS the library is running on and abstracts away any OS-specific audio playback implementations.
 
+### MP3 Playback on linux
+
+The library relies on the mpg123 audio player for playback of .mp3 files on linux.
+
 ## Properties
 
 ### bool Playing

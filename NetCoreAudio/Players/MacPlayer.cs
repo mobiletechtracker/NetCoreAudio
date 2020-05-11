@@ -4,12 +4,9 @@ namespace NetCoreAudio.Players
 {
     internal class MacPlayer : UnixPlayerBase, IPlayer
     {
-        protected override string BashToolName
+        protected override string GetBashCommand(string fileName)
         {
-            get
-            {
-                return "afplay";
-            }
+            return "afplay";
         }
     }
 }

@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 
 namespace NetCoreAudio.Players
 {
-    internal class UnixPlayerBase : IPlayer
+    internal abstract class UnixPlayerBase : IPlayer
     {
         private Process _process = null;
 
         internal const string PauseProcessCommand = "kill -STOP {0}";
         internal const string ResumeProcessCommand = "kill -CONT {0}";
-
-        protected virtual string BashToolName { get; }
 
         public event EventHandler PlaybackFinished;
 
@@ -20,9 +18,12 @@ namespace NetCoreAudio.Players
 
         public bool Paused { get; private set; }
 
+        protected abstract string GetBashCommand(string fileName);
+
         public async Task Play(string fileName)
         {
             await Stop();
+            var BashToolName = GetBashCommand(fileName);
             _process = StartBashProcess($"{BashToolName} '{fileName}'");
             _process.EnableRaisingEvents = true;
             _process.Exited += HandlePlaybackFinished;
