@@ -15,7 +15,7 @@
     <Version>1.6.1</Version>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIcon>icon.jfif</PackageIcon>
+    <PackageIcon>icon.jpg</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +23,7 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="icon.jfif">
+    <None Include="icon.jpg">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
