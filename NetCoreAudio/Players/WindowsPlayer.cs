@@ -29,8 +29,10 @@ namespace NetCoreAudio.Players
         public Task Play(string fileName)
         {
 			_fileName = fileName;
-			_playbackTimer = new Timer();
-            _playbackTimer.AutoReset = false;
+            _playbackTimer = new Timer
+            {
+                AutoReset = false
+            };
             _playStopwatch = new Stopwatch();
             ExecuteMsiCommand("Close All");
             ExecuteMsiCommand($"Status {_fileName} Length");
@@ -84,13 +86,6 @@ namespace NetCoreAudio.Players
             return Task.CompletedTask;
         }
 
-		private void MarkPlaybackAsStopped()
-		{
-			Playing = false;
-			_playbackTimer.Stop();
-			_playbackTimer.Elapsed -= HandlePlaybackFinished;
-		}
-
 		private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
         {
             Playing = false;
@@ -111,7 +106,7 @@ namespace NetCoreAudio.Players
 				var sb2 = new StringBuilder(128);
 
 				mciGetErrorString(result, sb2, 128);
-				errorSb.Append($" Message: {sb2.ToString()}");
+				errorSb.Append($" Message: {sb2}");
 
 				throw new Exception(errorSb.ToString());
             }

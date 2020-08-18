@@ -7,7 +7,7 @@ namespace NetCoreAudio.Players
     {
         protected override string GetBashCommand(string fileName)
         {
-            if (".mp3".Equals(Path.GetExtension(fileName)))
+            if (Path.GetExtension(fileName).ToLower().Equals(".mp3"))
             {
                 return "mpg123 -q";
             }
