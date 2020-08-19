@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using NetCoreAudio.Utils;
 
 namespace NetCoreAudio.Players
 {
@@ -28,7 +29,8 @@ namespace NetCoreAudio.Players
 
         public Task Play(string fileName)
         {
-			_fileName = fileName;
+            FileUtil.ClearTempFiles();
+            _fileName = $"\"{FileUtil.CheckFileToPlay(fileName)}\"";
             _playbackTimer = new Timer
             {
                 AutoReset = false
@@ -82,6 +84,7 @@ namespace NetCoreAudio.Players
                 Paused = false;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
+                FileUtil.ClearTempFiles();
             }
             return Task.CompletedTask;
         }
