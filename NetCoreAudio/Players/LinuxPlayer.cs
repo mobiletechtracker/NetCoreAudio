@@ -1,5 +1,7 @@
 ﻿using NetCoreAudio.Interfaces;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NetCoreAudio.Players
 {
@@ -15,6 +17,17 @@ namespace NetCoreAudio.Players
             {
                 return "aplay -q";
             }
+        }
+
+        public override Task SetVolume(byte percent)
+        {
+            if (percent > 100)
+                throw new ArgumentOutOfRangeException(nameof(percent), "Percent can't exceed 100");
+
+            var tempProcess = StartBashProcess($"amixer -M set Headphone {percent}%");
+            tempProcess.WaitForExit();
+
+            return Task.CompletedTask;
         }
     }
 }
