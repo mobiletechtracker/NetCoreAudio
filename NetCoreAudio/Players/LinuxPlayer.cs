@@ -24,7 +24,7 @@ namespace NetCoreAudio.Players
             if (percent > 100)
                 throw new ArgumentOutOfRangeException(nameof(percent), "Percent can't exceed 100");
 
-            var tempProcess = StartBashProcess($"amixer -M set Headphone {percent}%");
+            var tempProcess = StartBashProcess($"amixer -M set 'Master' {percent}%");
             tempProcess.WaitForExit();
 
             return Task.CompletedTask;
