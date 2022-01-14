@@ -40,6 +40,10 @@ Stops any current playback and clears the buffer. Sets Playing and Paused flags 
 
 Stopped playback cannot be resumed. If the same file needs to be played again, it can only be played from the beginning.
 
+### SetVolume()
+
+Sets the playing volume as percent
+
 ## Events
 
 ### EventHandler PlaybackFinished

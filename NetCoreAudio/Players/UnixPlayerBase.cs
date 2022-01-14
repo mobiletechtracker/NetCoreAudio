@@ -99,5 +99,7 @@ namespace NetCoreAudio.Players
                 PlaybackFinished?.Invoke(this, e);
             }
         }
+
+        public abstract Task SetVolume(byte percent);
     }
 }

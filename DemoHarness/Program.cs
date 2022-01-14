@@ -46,6 +46,12 @@ namespace DemoHarness
                             fileName = Console.ReadLine();
                             ShowInstruction();
                             break;
+                        case "volume":
+                            Console.WriteLine("Enter new volume in percent");
+                            byte volume = Convert.ToByte(Console.ReadLine());
+                            player.SetVolume(volume).Wait();
+                            ShowInstruction();
+                            break;
                         case "exit":
                             break;
                         default:
@@ -75,6 +81,7 @@ namespace DemoHarness
             Console.WriteLine("resume - Resume the playback");
             Console.WriteLine("stop - Stop the playback");
             Console.WriteLine("change - Change the file name");
+            Console.WriteLine("volume - Set the volume");
             Console.WriteLine("exit - Exit the app");
         }
 
