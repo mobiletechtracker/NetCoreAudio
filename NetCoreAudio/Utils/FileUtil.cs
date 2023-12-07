@@ -12,7 +12,7 @@ namespace NetCoreAudio.Utils
             if (originalFileName.Contains(" "))
             {
                 Directory.CreateDirectory(TempDirName);
-                fileNameToReturn = TempDirName + Path.DirectorySeparatorChar + 
+                fileNameToReturn = TempDirName + Path.DirectorySeparatorChar +
                     Path.GetFileName(originalFileName).Replace(" ", "");
                 File.Copy(originalFileName, fileNameToReturn);
             }

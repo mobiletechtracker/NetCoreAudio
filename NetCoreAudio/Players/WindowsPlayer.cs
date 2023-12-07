@@ -14,8 +14,8 @@ namespace NetCoreAudio.Players
         [DllImport("winmm.dll")]
         private static extern int mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
 
-		[DllImport("winmm.dll")]
-		private static extern int mciGetErrorString(int errorCode, StringBuilder errorText, int errorTextSize);
+        [DllImport("winmm.dll")]
+        private static extern int mciGetErrorString(int errorCode, StringBuilder errorText, int errorTextSize);
 
         [DllImport("winmm.dll")]
         public static extern int waveOutSetVolume(IntPtr hwo, uint dwVolume);
@@ -23,7 +23,7 @@ namespace NetCoreAudio.Players
         private Timer _playbackTimer;
         private Stopwatch _playStopwatch;
 
-		private string _fileName;
+        private string _fileName;
 
         public event EventHandler PlaybackFinished;
 
@@ -83,7 +83,7 @@ namespace NetCoreAudio.Players
             if (Playing)
             {
                 ExecuteMsiCommand($"Stop {_fileName}");
-				Playing = false;
+                Playing = false;
                 Paused = false;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
@@ -92,7 +92,7 @@ namespace NetCoreAudio.Players
             return Task.CompletedTask;
         }
 
-		private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
+        private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
         {
             Playing = false;
             PlaybackFinished?.Invoke(this, e);
@@ -108,13 +108,13 @@ namespace NetCoreAudio.Players
 
             if (result != 0)
             {
-				var errorSb = new StringBuilder($"Error executing MCI command '{commandString}'. Error code: {result}.");
-				var sb2 = new StringBuilder(128);
+                var errorSb = new StringBuilder($"Error executing MCI command '{commandString}'. Error code: {result}.");
+                var sb2 = new StringBuilder(128);
 
-				mciGetErrorString(result, sb2, 128);
-				errorSb.Append($" Message: {sb2}");
+                mciGetErrorString(result, sb2, 128);
+                errorSb.Append($" Message: {sb2}");
 
-				throw new Exception(errorSb.ToString());
+                throw new Exception(errorSb.ToString());
             }
 
             if (commandString.ToLower().StartsWith("status") && int.TryParse(sb.ToString(), out var length))
