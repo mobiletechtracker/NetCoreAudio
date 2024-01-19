@@ -12,13 +12,22 @@ namespace NetCoreAudio.Players
     internal class WindowsPlayer : IPlayer
     {
         [DllImport("winmm.dll")]
-        private static extern int mciSendString(string command, StringBuilder stringReturn, int returnLength, IntPtr hwndCallback);
+        private static extern int mciSendString(
+            string command,
+            StringBuilder stringReturn,
+            int returnLength,
+            IntPtr hwndCallback);
 
         [DllImport("winmm.dll")]
-        private static extern int mciGetErrorString(int errorCode, StringBuilder errorText, int errorTextSize);
+        private static extern int mciGetErrorString(
+            int errorCode,
+            StringBuilder errorText,
+            int errorTextSize);
 
         [DllImport("winmm.dll")]
-        public static extern int waveOutSetVolume(IntPtr hwo, uint dwVolume);
+        public static extern int waveOutSetVolume(
+            IntPtr hwo,
+            uint dwVolume);
 
         private Timer _playbackTimer;
         private Stopwatch _playStopwatch;
@@ -108,7 +117,8 @@ namespace NetCoreAudio.Players
 
             if (result != 0)
             {
-                var errorSb = new StringBuilder($"Error executing MCI command '{commandString}'. Error code: {result}.");
+                var errorSb = new StringBuilder(
+                    $"Error executing MCI command '{commandString}'. Error code: {result}.");
                 var sb2 = new StringBuilder(128);
 
                 mciGetErrorString(result, sb2, 128);
@@ -117,7 +127,9 @@ namespace NetCoreAudio.Players
                 throw new Exception(errorSb.ToString());
             }
 
-            if (commandString.ToLower().StartsWith("status") && int.TryParse(sb.ToString(), out var length))
+            if (commandString.ToLower()
+                .StartsWith("status") && 
+                int.TryParse(sb.ToString(), out var length))
                 _playbackTimer.Interval = length;
 
             return Task.CompletedTask;
@@ -128,7 +140,8 @@ namespace NetCoreAudio.Players
             // Calculate the volume that's being set
             int NewVolume = ushort.MaxValue / 100 * percent;
             // Set the same volume for both the left and the right channels
-            uint NewVolumeAllChannels = ((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16);
+            uint NewVolumeAllChannels = 
+                ((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16);
             // Set the volume
             waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
 
