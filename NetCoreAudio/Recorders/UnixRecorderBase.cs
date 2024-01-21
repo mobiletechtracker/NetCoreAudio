@@ -43,7 +43,7 @@ namespace NetCoreAudio.Recorders
             return Task.CompletedTask;
         }
 
-        internal void HandleRecordingFinished(object sender, EventArgs e)
+        private void HandleRecordingFinished(object sender, EventArgs e)
         {
             if (Recording)
             {

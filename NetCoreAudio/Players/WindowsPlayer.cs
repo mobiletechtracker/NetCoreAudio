@@ -1,28 +1,17 @@
 ﻿using NetCoreAudio.Interfaces;
+using NetCoreAudio.Utils;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using NetCoreAudio.Utils;
 
 namespace NetCoreAudio.Players
 {
     internal class WindowsPlayer : IPlayer
     {
-        [DllImport("winmm.dll")]
-        private static extern int mciSendString(
-            string command,
-            StringBuilder stringReturn,
-            int returnLength,
-            IntPtr hwndCallback);
-
-        [DllImport("winmm.dll")]
-        private static extern int mciGetErrorString(
-            int errorCode,
-            StringBuilder errorText,
-            int errorTextSize);
+        
 
         [DllImport("winmm.dll")]
         public static extern int waveOutSetVolume(
@@ -39,7 +28,7 @@ namespace NetCoreAudio.Players
         public bool Playing { get; private set; }
         public bool Paused { get; private set; }
 
-        public Task Play(string fileName)
+        public async Task Play(string fileName)
         {
             FileUtil.ClearTempFiles();
             _fileName = $"\"{FileUtil.CheckFileToPlay(fileName)}\"";
@@ -48,57 +37,51 @@ namespace NetCoreAudio.Players
                 AutoReset = false
             };
             _playStopwatch = new Stopwatch();
-            ExecuteMsiCommand("Close All");
-            ExecuteMsiCommand($"Status {_fileName} Length");
-            ExecuteMsiCommand($"Play {_fileName}");
+            await WindowsUtil.ExecuteMciCommand("Close All");
+            await WindowsUtil.ExecuteMciCommand($"Status {_fileName} Length", _playbackTimer);
+            await WindowsUtil.ExecuteMciCommand($"Play {_fileName}");
             Paused = false;
             Playing = true;
             _playbackTimer.Elapsed += HandlePlaybackFinished;
             _playbackTimer.Start();
             _playStopwatch.Start();
-
-            return Task.CompletedTask;
         }
 
-        public Task Pause()
+        public async Task Pause()
         {
             if (Playing && !Paused)
             {
-                ExecuteMsiCommand($"Pause {_fileName}");
+                await WindowsUtil.ExecuteMciCommand($"Pause {_fileName}");
                 Paused = true;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
                 _playbackTimer.Interval -= _playStopwatch.ElapsedMilliseconds;
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task Resume()
+        public async Task Resume()
         {
             if (Playing && Paused)
             {
-                ExecuteMsiCommand($"Resume {_fileName}");
+                await WindowsUtil.ExecuteMciCommand($"Resume {_fileName}");
                 Paused = false;
                 _playbackTimer.Start();
                 _playStopwatch.Reset();
                 _playStopwatch.Start();
             }
-            return Task.CompletedTask;
         }
 
-        public Task Stop()
+        public async Task Stop()
         {
             if (Playing)
             {
-                ExecuteMsiCommand($"Stop {_fileName}");
+                await WindowsUtil.ExecuteMciCommand($"Stop {_fileName}");
                 Playing = false;
                 Paused = false;
                 _playbackTimer.Stop();
                 _playStopwatch.Stop();
                 FileUtil.ClearTempFiles();
             }
-            return Task.CompletedTask;
         }
 
         private void HandlePlaybackFinished(object sender, ElapsedEventArgs e)
@@ -109,41 +92,15 @@ namespace NetCoreAudio.Players
             _playbackTimer = null;
         }
 
-        private Task ExecuteMsiCommand(string commandString)
-        {
-            var sb = new StringBuilder();
-
-            var result = mciSendString(commandString, sb, 1024 * 1024, IntPtr.Zero);
-
-            if (result != 0)
-            {
-                var errorSb = new StringBuilder(
-                    $"Error executing MCI command '{commandString}'. Error code: {result}.");
-                var sb2 = new StringBuilder(128);
-
-                mciGetErrorString(result, sb2, 128);
-                errorSb.Append($" Message: {sb2}");
-
-                throw new Exception(errorSb.ToString());
-            }
-
-            if (commandString.ToLower()
-                .StartsWith("status") && 
-                int.TryParse(sb.ToString(), out var length))
-                _playbackTimer.Interval = length;
-
-            return Task.CompletedTask;
-        }
-
         public Task SetVolume(byte percent)
         {
             // Calculate the volume that's being set
-            int NewVolume = ushort.MaxValue / 100 * percent;
+            int newVolume = ushort.MaxValue / 100 * percent;
             // Set the same volume for both the left and the right channels
-            uint NewVolumeAllChannels = 
-                ((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16);
+            uint newVolumeAllChannels =
+                ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
             // Set the volume
-            waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
+            waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
 
             return Task.CompletedTask;
         }

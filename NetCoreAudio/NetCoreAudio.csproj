@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/mobiletechtracker/NetCoreAudio</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>.NET Core audio</PackageTags>
-    <Version>2.0.0</Version>
+    <Version>2.0.0-alpha</Version>
     <PackageIconUrl></PackageIconUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.jpg</PackageIcon>
