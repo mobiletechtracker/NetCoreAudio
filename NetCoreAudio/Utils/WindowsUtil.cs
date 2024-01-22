@@ -21,7 +21,22 @@ namespace NetCoreAudio.Utils
             StringBuilder errorText,
             int errorTextSize);
 
-        public static Task ExecuteMciCommand(string commandString, Timer playbackTimer = null)
+        [DllImport("winmm.dll")]
+        public static extern int waveOutSetVolume(
+            IntPtr hwo,
+            uint dwVolume);
+
+        [DllImport("winmm.dll")]
+        public static extern int waveInOpen(
+            ref IntPtr lphWaveIn,
+            uint DEVICEID,
+            ref WaveFormat lpWaveFormat,
+            IntPtr dwCallback,
+            uint dwInstance,
+            uint dwFlags);
+
+        public static Task ExecuteMciCommand(
+            string commandString, Timer playbackTimer = null)
         {
             var sb = new StringBuilder();
 
@@ -45,5 +60,29 @@ namespace NetCoreAudio.Utils
 
             return Task.CompletedTask;
         }
+
+        public static Task SetVolume(byte percent)
+        {
+            // Calculate the volume that's being set
+            int newVolume = ushort.MaxValue / 100 * percent;
+            // Set the same volume for both the left and the right channels
+            uint newVolumeAllChannels =
+                ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
+            // Set the volume
+            waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
+
+            return Task.CompletedTask;
+        }
+    }
+
+    public struct WaveFormat
+    {
+        public short wFormatTag;
+        public short nChannels;
+        public uint nSamplesPerSec;
+        public uint nAvgBytesPerSec;
+        public short nBlockAlign;
+        public short wBitsPerSample;
+        public short cbSize;
     }
 }

@@ -2,8 +2,6 @@
 using NetCoreAudio.Utils;
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -11,13 +9,6 @@ namespace NetCoreAudio.Players
 {
     internal class WindowsPlayer : IPlayer
     {
-        
-
-        [DllImport("winmm.dll")]
-        public static extern int waveOutSetVolume(
-            IntPtr hwo,
-            uint dwVolume);
-
         private Timer _playbackTimer;
         private Stopwatch _playStopwatch;
 
@@ -92,17 +83,9 @@ namespace NetCoreAudio.Players
             _playbackTimer = null;
         }
 
-        public Task SetVolume(byte percent)
+        public async Task SetVolume(byte percent)
         {
-            // Calculate the volume that's being set
-            int newVolume = ushort.MaxValue / 100 * percent;
-            // Set the same volume for both the left and the right channels
-            uint newVolumeAllChannels =
-                ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
-            // Set the volume
-            waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
-
-            return Task.CompletedTask;
+            await WindowsUtil.SetVolume(percent);
         }
     }
 }

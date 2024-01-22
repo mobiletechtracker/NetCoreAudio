@@ -25,7 +25,9 @@ namespace NetCoreAudio.Recorders
                 _fileName = fileName;
 
                 Recording = true;
+                await WindowsUtil.ExecuteMciCommand("Close All");
                 await WindowsUtil.ExecuteMciCommand("open new Type waveaudio Alias recsound");
+                await WindowsUtil.ExecuteMciCommand("set recsound time format ms bitspersample 16 channels 2 samplespersec 48000 bytespersec 192000 alignment 4");
                 await WindowsUtil.ExecuteMciCommand("record recsound");
             }
             catch
@@ -43,7 +45,7 @@ namespace NetCoreAudio.Recorders
             try
             {
                 await WindowsUtil.ExecuteMciCommand($"save recsound {_fileName}");
-                await WindowsUtil.ExecuteMciCommand("close recsound ");
+                await WindowsUtil.ExecuteMciCommand("close recsound");
                 
             }
             finally

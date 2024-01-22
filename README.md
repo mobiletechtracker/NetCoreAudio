@@ -57,3 +57,11 @@ For audio recording, we use the `Recorder` class. The class contains the followi
 
 * `Task Record(string fileName)`: Begins the recording into the specified audio file.
 * `Task Stop()`: Stops the recording ans saves the data into the file specified previously.
+
+## Contact and support
+
+If you want to support me and my work, you can do so via [this page](https://www.buymeacoffee.com/fiodar).
+
+If you want my help integrating this library with your software or making any bespoke changes to it to meet your needs, you can book my time via [this page](https://mentorcruise.com/sessions/expert-consultation/book/2306/).
+
+For any other queries, you can get in touch with me via [LinkedIn](https://www.linkedin.com/in/fiodar-sazanavets/).
