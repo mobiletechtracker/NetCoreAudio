@@ -1,4 +1,5 @@
 ﻿using NetCoreAudio.Interfaces;
+using NetCoreAudio.Utils;
 using System;
 using System.Threading.Tasks;
 
@@ -14,9 +15,11 @@ namespace NetCoreAudio.Players
         public override Task SetVolume(byte percent)
         {
             if (percent > 100)
-                throw new ArgumentOutOfRangeException(nameof(percent), "Percent can't exceed 100");
+                throw new ArgumentOutOfRangeException(
+                    nameof(percent), "Percent can't exceed 100");
 
-            var tempProcess = StartBashProcess($"osascript -e \"set volume output volume {percent}\"");
+            var tempProcess = BashUtil.StartBashProcess(
+                $"osascript -e \"set volume output volume {percent}\"");
             tempProcess.WaitForExit();
 
             return Task.CompletedTask;

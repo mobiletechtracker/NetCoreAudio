@@ -1,4 +1,5 @@
 ﻿using NetCoreAudio.Interfaces;
+using NetCoreAudio.Utils;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -24,7 +25,8 @@ namespace NetCoreAudio.Players
         {
             await Stop();
             var BashToolName = GetBashCommand(fileName);
-            _process = StartBashProcess($"{BashToolName} '{fileName}'");
+            _process = BashUtil.StartBashProcess(
+                $"{BashToolName} '{fileName}'");
             _process.EnableRaisingEvents = true;
             _process.Exited += HandlePlaybackFinished;
             _process.ErrorDataReceived += HandlePlaybackFinished;
@@ -36,7 +38,8 @@ namespace NetCoreAudio.Players
         {
             if (Playing && !Paused && _process != null)
             {
-                var tempProcess = StartBashProcess(string.Format(PauseProcessCommand, _process.Id));
+                var tempProcess = BashUtil.StartBashProcess(
+                    string.Format(PauseProcessCommand, _process.Id));
                 tempProcess.WaitForExit();
                 Paused = true;
             }
@@ -48,7 +51,8 @@ namespace NetCoreAudio.Players
         {
             if (Playing && Paused && _process != null)
             {
-                var tempProcess = StartBashProcess(string.Format(ResumeProcessCommand, _process.Id));
+                var tempProcess = BashUtil.StartBashProcess(
+                    string.Format(ResumeProcessCommand, _process.Id));
                 tempProcess.WaitForExit();
                 Paused = false;
             }
@@ -69,26 +73,6 @@ namespace NetCoreAudio.Players
             Paused = false;
 
             return Task.CompletedTask;
-        }
-
-        protected Process StartBashProcess(string command)
-        {
-            var escapedArgs = command.Replace("\"", "\\\"");
-
-            var process = new Process()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"{escapedArgs}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                }
-            };
-            process.Start();
-            return process;
         }
 
         internal void HandlePlaybackFinished(object sender, EventArgs e)
