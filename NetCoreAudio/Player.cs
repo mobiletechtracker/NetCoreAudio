@@ -50,7 +50,7 @@ namespace NetCoreAudio
         }
 
         /// <summary>
-        /// Pauses any ongong playback. Sets Paused flag to true. Doesn't modify Playing flag.
+        /// Pauses any ongoing playback. Sets Paused flag to true. Doesn't modify Playing flag.
         /// </summary>
         /// <returns></returns>
         public async Task Pause()

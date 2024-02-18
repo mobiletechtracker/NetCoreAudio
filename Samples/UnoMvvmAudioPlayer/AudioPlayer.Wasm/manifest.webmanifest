@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "AudioPlayer",
+  "display": "standalone",
+  "name": "AudioPlayer",
+  "short_name": "AudioPlayer",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
