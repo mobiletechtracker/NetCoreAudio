@@ -51,11 +51,6 @@ internal partial class MainModel : ObservableObject
         UpdateStatuses();
     }
 
-    private void OnPlaybackFinished(object? sender, EventArgs? e)
-    {
-        UpdateStatuses();
-    }
-
     private void UpdateStatuses()
     {
         Playing = _player.Playing;
